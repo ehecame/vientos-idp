@@ -29,7 +29,7 @@ function postLogin (request, reply, source, error) {
         return reply.view('login', { errors: errors, email: request.payload.email })
           .code(400)
       }
-      request.cookieAuth.set({ id: user.id })
+      request.cookieAuth.set({id: user.id})
       return reply.view('info', { title: i18n.__('Success') })
     })
 }

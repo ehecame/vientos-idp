@@ -6,11 +6,12 @@ const Handlebars = require('handlebars')
 const i18n = require('i18n')
 const path = require('path')
 const mongoose = require('mongoose')
+const User = require('./models/user')
 
 const PORT = process.env.HAPI_PORT || 3000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
 const NODE_ENV = process.env.NODE_ENV || 'development'
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017'
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
 
 mongoose.Promise = global.Promise
 mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
@@ -37,8 +38,25 @@ server.register([AuthCookie, Vision], (err) => {
 
   server.auth.strategy('session', 'cookie', true, {
     password: COOKIE_PASSWORD,
-    isSecure: IS_SECURE
+    isSecure: IS_SECURE,
+    //redirectTo: '/login',
+    validateFunc: (request, session, callback) => {
+      if (!session.id) {
+        return callback(null, true)
+      }
+      User.findById(session.id)
+        .then(user => {
+          if (!user) {
+            return callback(null, false)
+          }
+          return callback(null, true, { id: user.id })
+        })
+        .catch(err => {
+          callback(err, false)
+        })
+    }
   })
+  server.route(require('./routes/oAuth'))
 })
 
 server.views({

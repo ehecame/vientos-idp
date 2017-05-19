@@ -1,7 +1,6 @@
 const Mongoose = require('mongoose')
 
 const userSchema = new Mongoose.Schema({
-  id: { type: String },
   email: { type: String, index: { unique: true } },
   desiredEmail: { type: String },
   confirmationCode: { type: String },
@@ -9,5 +8,4 @@ const userSchema = new Mongoose.Schema({
   password: { type: String }
 })
 
-const User = Mongoose.model('User', userSchema)
-module.exports = User
+module.exports = Mongoose.model('User', userSchema, 'users')
