@@ -37,7 +37,7 @@ function saveToken (token, client, user) {
 function getAuthorizationCode (authorizationCode) {
   return AuthorizationCode.findOne({
     code: authorizationCode,
-    //expiresAt: { $gt: new Date().toISOString() }
+    expiresAt: { $gt: new Date().toISOString() }
   })
   .populate('client')
   .then(code => ({
@@ -71,7 +71,7 @@ function revokeAuthorizationCode (code) {
     code: code.code
   })
   .then(code => {
-    //code.expiresAt = new Date().toISOString()
+    code.expiresAt = new Date().toISOString()
     return code.save()
   })
 }

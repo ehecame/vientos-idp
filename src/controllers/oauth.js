@@ -5,11 +5,7 @@ const Response = OAuth2Server.Response
 
 const oAuth = new OAuth2Server({
   model: OAuthModel,
-  authenticateHandler: {
-    handle: (request, response) => {
-      return request.user
-    }
-  },
+
   // for easy tesing
   authorizationCodeLifetime: 1000
 })
@@ -23,11 +19,14 @@ function authorize (request, reply) {
   })
 
   let oAuthResponse = new Response(request.raw.res)
-
-  return oAuth.authorize(oAuthRequest, oAuthResponse, {})
-    .then(() => {
-      return reply.redirect(oAuthResponse.headers.location)
-    })
+  return oAuth.authorize(oAuthRequest, oAuthResponse, {
+    authenticateHandler: {
+      handle: (request, response) => request.user
+    }
+  })
+  .then(() => {
+    return reply.redirect(oAuthResponse.headers.location)
+  })
 }
 
 function token (request, reply) {
