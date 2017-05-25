@@ -10,5 +10,13 @@ module.exports = [
         strategy: 'session'
       }
     }
+  },
+  {
+    method: 'POST',
+    path: '/token',
+    config: {
+      handler: oAuthController.token,
+      auth: false
+    }
   }
 ]

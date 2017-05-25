@@ -109,5 +109,13 @@ module.exports = [
       handler: UiController.getPasswordRecover,
       auth: false
     }
+  },
+  {
+    method: 'GET',
+    path: '/logout',
+    config: {
+      handler: UiController.getLogout,
+      auth: false
+    }
   }
 ]

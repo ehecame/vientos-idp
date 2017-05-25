@@ -167,6 +167,11 @@ function postPasswordRecover (request, reply) {
   .catch(e => console.log(e))
 }
 
+function getLogout (request, reply) {
+  request.cookieAuth.clear()
+  return reply.view('info', { title: i18n.__('Success') })
+}
+
 module.exports = {
   getLogin,
   postLogin,
@@ -177,5 +182,6 @@ module.exports = {
   getPasswordReset,
   postPasswordReset,
   getPasswordRecover,
-  postPasswordRecover
+  postPasswordRecover,
+  getLogout: getLogout
 }

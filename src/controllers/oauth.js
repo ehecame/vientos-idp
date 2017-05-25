@@ -7,17 +7,17 @@ const oAuth = new OAuth2Server({
   model: OAuthModel,
   authenticateHandler: {
     handle: (request, response) => {
-      console.log(request.headers.cookie)
       return request.user
     }
-  }
+  },
+  // for easy tesing
+  authorizationCodeLifetime: 1000
 })
 
 function authorize (request, reply) {
   let oAuthRequest = new Request({
     headers: request.raw.req.headers,
     method: request.raw.req.method,
-    body: request.payload,
     query: request.query,
     user: request.auth.credentials
   })
@@ -30,6 +30,22 @@ function authorize (request, reply) {
     })
 }
 
+function token (request, reply) {
+  let oAuthRequest = new Request({
+    headers: request.raw.req.headers,
+    method: request.raw.req.method,
+    query: request.query,
+    body: request.payload
+  })
+
+  let oAuthResponse = new Response(request.raw.res)
+  return oAuth.token(oAuthRequest, oAuthResponse, {})
+    .then(() => {
+      return reply(oAuthResponse.body)
+    })
+}
+
 module.exports = {
-  authorize: authorize
+  authorize: authorize,
+  token: token
 }

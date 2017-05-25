@@ -7,6 +7,7 @@ const seeder = require('mongoose-seed')
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
 const VIENTOS_SERVICE_URL = process.env.VIENTOS_SERVICE_URL || 'http://localhost:8000'
 const VIENTOS_CLIENT_ID = process.env.VIENTOS_CLIENT_ID || '12345678'
+const VIENTOS_CLIENT_SECRET = process.env.VIENTOS_CLIENT_SECRET || '12345678'
 
 gulp.task('default', ['server:start', 'server:restart'])
 
@@ -34,8 +35,9 @@ gulp.task('db:seed', () => {
     var data = [{
       'model': 'Client',
       'documents': [{
-        'id': VIENTOS_CLIENT_ID,
-        'redirectUri': VIENTOS_SERVICE_URL,
+        'clientId': VIENTOS_CLIENT_ID,
+        'secret': VIENTOS_CLIENT_SECRET,
+        'redirectUris': [VIENTOS_SERVICE_URL],
         'grantTypes': ['authorization_code'],
         'scope': 'profile'
       }]

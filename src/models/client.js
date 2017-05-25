@@ -2,9 +2,10 @@
 var Mongoose = require('mongoose')
 
 const ClientSchema = new Mongoose.Schema({
-  id: String,
-  redirectUri: String,
-  grantTypes: String,
+  clientId: String,
+  secret: String,
+  redirectUris: [String],
+  grantTypes: [String],
   scope: String
 })
 

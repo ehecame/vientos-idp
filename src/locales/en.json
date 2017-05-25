@@ -28,5 +28,6 @@
 	"Password Recovery": "Password Recovery",
 	"Vientos Password Recovery": "Vientos Password Recovery",
 	"Success": "Success",
-	"Email with reset link has been sent to your mailbox": "Email with reset link has been sent to your mailbox"
+	"Email with reset link has been sent to your mailbox": "Email with reset link has been sent to your mailbox",
+	"Logout": "Logout"
 }

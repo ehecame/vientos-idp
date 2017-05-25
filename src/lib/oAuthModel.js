@@ -30,14 +30,18 @@ function saveToken (token, client, user) {
 function getAuthorizationCode (authorizationCode) {
   return AuthorizationCode.findOne({
     code: authorizationCode,
-    expiresAt: { $gt: new Date().toISOString() }
+    //expiresAt: { $gt: new Date().toISOString() }
   })
+  .populate('client')
   .then(code => ({
     code: code.code,
     expiresAt: code.expiresAt,
-    client: { id: code.client },
+    client: code.client,
     user: { id: code.user }
   }))
+  .catch(e => {
+    console.log('aaaaa')
+  })
 }
 
 function saveAuthorizationCode (code, client, user) {
@@ -50,8 +54,8 @@ function saveAuthorizationCode (code, client, user) {
   .then(code => ({
     authorizationCode: code.code,
     expiresAt: code.expiresAt,
-    client: { id: code.client },
-    user: { id: code.user }
+    client: code.client.id,
+    user: code.user.id
   }))
 }
 
@@ -60,7 +64,7 @@ function revokeAuthorizationCode (code) {
     code: code.code
   })
   .then(code => {
-    code.expiresAt = new Date().toISOString()
+    //code.expiresAt = new Date().toISOString()
     return code.save()
   })
 }
@@ -68,10 +72,10 @@ function revokeAuthorizationCode (code) {
 function getClient (clientId, clientSecret) {
   let params = {}
   if (clientId) {
-    params.id = clientId
+    params.clientId = clientId
   }
   if (clientSecret) {
-    params.clientSecret = clientSecret
+    params.secret = clientSecret
   }
   return Client.findOne(params)
     .then(client => {
@@ -81,7 +85,7 @@ function getClient (clientId, clientSecret) {
       return {
         id: client.id,
         grants: client.grantTypes,
-        redirectUris: [client.redirectUri]
+        redirectUris: client.redirectUris
       }
     })
 }
