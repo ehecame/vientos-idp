@@ -2,14 +2,21 @@ const AuthorizationCode = require('../models/authorizationCode')
 const Client = require('../models/client')
 const Token = require('../models/token')
 
-function getAccessToken (accessToken, callback) {
+function getAccessToken (accessToken) {
   return Token.findOne({ accessToken: accessToken })
-    .then(token => ({
-      accessToken: token.accessToken,
-      accessTokenExpiresAt: token.expiresAt,
-      client: { id: token.clinet },
-      user: { id: token.user }
-    }))
+    .populate('user')
+    .populate('client')
+    .then(token => {
+      if (!token) {
+        throw new Error('Client not found')
+      }
+      return {
+        accessToken: token.accessToken,
+        accessTokenExpiresAt: token.expiresAt,
+        client: { id: token.client.id },
+        user: { id: token.user.id, email: token.user.email }
+      }
+    })
 }
 
 function saveToken (token, client, user) {

@@ -45,7 +45,29 @@ function token (request, reply) {
     })
 }
 
+function userinfo (request, reply) {
+  let oAuthRequest = new Request({
+    headers: request.raw.req.headers,
+    method: request.raw.req.method,
+    query: request.query,
+    body: request.payload
+  })
+
+  let oAuthResponse = new Response(request.raw.res)
+  return oAuth.authenticate(oAuthRequest, oAuthResponse, {})
+    .then(token => {
+      return reply({
+        user_id: token.user,
+        email: token.user.email,
+        name: token.user.email,
+        given_name: '',
+        family_name: ''
+      })
+    })
+}
+
 module.exports = {
   authorize: authorize,
-  token: token
+  token: token,
+  userinfo: userinfo
 }

@@ -18,5 +18,13 @@ module.exports = [
       handler: oAuthController.token,
       auth: false
     }
+  },
+  {
+    method: 'GET',
+    path: '/userinfo',
+    config: {
+      handler: oAuthController.userinfo,
+      auth: false
+    }
   }
 ]
