@@ -25,7 +25,10 @@ function authorize (request, reply) {
     }
   })
   .then(() => {
-    return reply.redirect(oAuthResponse.headers.location)
+    return replyWithHapi(oAuthResponse, reply)
+  })
+  .catch(e => {
+    return replyWithHapi(oAuthResponse, reply, e)
   })
 }
 
@@ -40,7 +43,10 @@ function token (request, reply) {
   let oAuthResponse = new Response(request.raw.res)
   return oAuth.token(oAuthRequest, oAuthResponse, {})
     .then(() => {
-      return reply(oAuthResponse.body)
+      return replyWithHapi(oAuthResponse, reply)
+    })
+    .catch(e => {
+      return replyWithHapi(oAuthResponse, reply, e)
     })
 }
 
@@ -56,13 +62,28 @@ function userinfo (request, reply) {
   return oAuth.authenticate(oAuthRequest, oAuthResponse, {})
     .then(token => {
       return reply({
-        user_id: token.user,
-        email: token.user.email,
-        name: token.user.email,
-        given_name: '',
-        family_name: ''
+        id: token.user.id,
+        email: token.user.email
       })
     })
+    .catch(e => {
+      return replyWithHapi(oAuthResponse, reply, e)
+    })
+}
+
+function replyWithHapi (oAuthResponse, reply, error) {
+  let response = reply(oAuthResponse.body).hold()
+  Object.keys(oAuthResponse.headers).forEach(key => {
+    response.header(key, oAuthResponse.headers[key], {})
+  })
+  response.query = oAuthResponse.query
+  response.code(oAuthResponse.status)
+
+  if (error) {
+    response.source = { error: error.name, error_description: error.message }
+    response.code(error.code)
+  }
+  response.send()
 }
 
 module.exports = {

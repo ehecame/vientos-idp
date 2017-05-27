@@ -8,7 +8,7 @@ function getAccessToken (accessToken) {
     .populate('client')
     .then(token => {
       if (!token) {
-        throw new Error('Client not found')
+        return null
       }
       return {
         accessToken: token.accessToken,
@@ -87,7 +87,7 @@ function getClient (clientId, clientSecret) {
   return Client.findOne(params)
     .then(client => {
       if (!client) {
-        throw new Error('Client not found')
+        return null
       }
       return {
         id: client.id,

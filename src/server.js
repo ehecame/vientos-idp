@@ -8,13 +8,13 @@ const path = require('path')
 const mongoose = require('mongoose')
 const User = require('./models/user')
 
-const PORT = process.env.HAPI_PORT || 3000
+const PORT = process.env.IDP_PORT || 4000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
 const NODE_ENV = process.env.NODE_ENV || 'development'
-const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
+const IDP_MONGO_URL = process.env.IDP_MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
 
 mongoose.Promise = global.Promise
-mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
+mongoose.connect(IDP_MONGO_URL, { promiseLibrary: global.Promise })
 
 const server = new Hapi.Server()
 
@@ -39,7 +39,7 @@ server.register([AuthCookie, Vision], (err) => {
   server.auth.strategy('session', 'cookie', true, {
     password: COOKIE_PASSWORD,
     isSecure: IS_SECURE,
-    //redirectTo: '/login',
+    redirectTo: '/login',
     validateFunc: (request, session, callback) => {
       if (!session.id) {
         return callback(null, true)
