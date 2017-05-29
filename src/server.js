@@ -40,6 +40,7 @@ server.register([AuthCookie, Vision], (err) => {
     password: COOKIE_PASSWORD,
     isSecure: IS_SECURE,
     redirectTo: '/login',
+    appendNext: true,
     validateFunc: (request, session, callback) => {
       if (!session.id) {
         return callback(null, true)

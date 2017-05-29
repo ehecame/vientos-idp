@@ -7,29 +7,45 @@ const helpers = require('../lib/helpers')
 const mailSender = require('../lib/mailSender.js')
 
 function getLogin (request, reply) {
-  reply.view('login')
+  return reply.view('login', { next: encodeURIComponent(request.query.next) })
 }
 
 function postLogin (request, reply, source, error) {
   var errors = helpers.formatErrors(error)
   if (Object.keys(errors).length > 0) {
-    return reply.view('login', { errors: errors })
-      .code(400)
+    return reply.view('login', {
+      errors: errors,
+      next: encodeURIComponent(request.query.next)
+    })
+    .code(400)
   }
 
-  User.findOne({ email: request.payload.email })
+  return User.findOne({ email: request.payload.email })
     .then(user => {
       if (!user) {
         errors['email'] = i18n.__('"email" is invaid')
-        return reply.view('login', { errors: errors, email: request.payload.email })
-          .code(400)
+        return reply.view('login', {
+          errors: errors,
+          email: request.payload.email,
+          next: encodeURIComponent(request.query.next)
+        })
+        .code(400)
       }
       if (!passwordHash.verify(request.payload.password, user.password)) {
         errors['password'] = i18n.__('Invalid password')
-        return reply.view('login', { errors: errors, email: request.payload.email })
-          .code(400)
+        return reply.view('login', {
+          errors: errors,
+          email: request.payload.email,
+          next: encodeURIComponent(request.query.next)
+        })
+        .code(400)
       }
       request.cookieAuth.set({id: user.id})
+
+      if (request.query.next) {
+        return reply.redirect(request.query.next)
+      }
+
       return reply.view('info', { title: i18n.__('Success') })
     })
 }

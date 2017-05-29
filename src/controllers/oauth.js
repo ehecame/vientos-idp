@@ -5,7 +5,6 @@ const Response = OAuth2Server.Response
 
 const oAuth = new OAuth2Server({
   model: OAuthModel,
-
   // for easy tesing
   authorizationCodeLifetime: 1000
 })
@@ -72,7 +71,7 @@ function userinfo (request, reply) {
 }
 
 function replyWithHapi (oAuthResponse, reply, error) {
-  let response = reply(oAuthResponse.body).hold()
+  let response = reply(oAuthResponse.body)
   Object.keys(oAuthResponse.headers).forEach(key => {
     response.header(key, oAuthResponse.headers[key], {})
   })
@@ -83,7 +82,7 @@ function replyWithHapi (oAuthResponse, reply, error) {
     response.source = { error: error.name, error_description: error.message }
     response.code(error.code)
   }
-  response.send()
+  return response
 }
 
 module.exports = {
