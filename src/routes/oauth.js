@@ -1,4 +1,4 @@
-const oAuthController = require('./../controllers/oAuth')
+const oAuthController = require('./../controllers/oauth')
 
 module.exports = [
   {
