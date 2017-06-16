@@ -77,8 +77,7 @@ function postRegister (request, reply, source, error) {
     }).then(user => {
       let confirmationUrl = URL_ROOT + '/confirmation?code=' + user.confirmationCode
 
-      return mailSender.sendEmailAsText('vientos@vientos.coop',
-        user.desiredEmail, 'Vientos Registration', confirmationUrl)
+      return mailSender.sendEmailAsText(user.desiredEmail, i18n.__('Vientos Registration'), confirmationUrl)
     })
     .then(() => {
       return reply.redirect('/registered')
@@ -174,8 +173,7 @@ function postPasswordRecover (request, reply) {
   }).then(reset => {
     let resetUrl = URL_ROOT + '/password-reset?code=' + reset.code
 
-    return mailSender.sendEmailAsText('vientos@vientos.coop',
-      reset.email, i18n.__('Vientos Password Reset'), resetUrl)
+    return mailSender.sendEmailAsText(reset.email, i18n.__('Vientos Password Reset'), resetUrl)
   })
   .then(() => {
     return reply.view('password-recover-sent')

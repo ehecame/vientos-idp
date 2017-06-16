@@ -1,21 +1,18 @@
-const helper = require('sendgrid').mail
-const sg = require('sendgrid')(process.env.SENDGRID_API_KEY)
+const Mailjet = require('node-mailjet').connect(
+  process.env.MAILJET_APIKEY_PUBLIC,
+  process.env.MAILJET_APIKEY_SECRET
+)
 
-function sendEmailAsText (from, to, subject, content) {
-  console.log(process.env.SENDGRID_API_KEY)
-  let mail = new helper.Mail(
-    new helper.Email(from),
-    subject,
-    new helper.Email(to),
-    new helper.Content('text/plain', content)
-  )
+const FROM_EMAIL = process.env.FROM_EMAIL
 
-  let request = sg.emptyRequest({
-    method: 'POST',
-    path: '/v3/mail/send',
-    body: mail.toJSON()
-  })
-  return sg.API(request)
+function sendEmailAsText (to, subject, text) {
+  const emailData = {
+    FromEmail: FROM_EMAIL,
+    Recipients: [{ Email: to }],
+    Subject: subject,
+    'Text-part': text
+  }
+  return Mailjet.post('send').request(emailData)
 }
 
 module.exports = {
