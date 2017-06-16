@@ -15,13 +15,13 @@ if (process.env.TLS_KEY_PATH && process.env.TLS_CERT_PATH) {
   httpServerOptions.cert = fs.readFileSync(process.env.TLS_CERT_PATH)
 }
 
-const PORT = process.env.IDP_PORT || 4000
+const PORT = process.env.PORT || 4000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
 const NODE_ENV = process.env.NODE_ENV || 'development'
-const IDP_MONGO_URL = process.env.IDP_MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
+const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
 
 mongoose.Promise = global.Promise
-mongoose.connect(IDP_MONGO_URL, { promiseLibrary: global.Promise })
+mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
 
 const server = new Hapi.Server()
 
