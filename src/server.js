@@ -82,6 +82,16 @@ server.views({
 
 server.route(require('./routes/ui'))
 
+// reply 200 OK (for uptime monitors)
+server.route({
+  method: 'GET',
+  path: '/',
+  config: {
+    handler: (request, reply) => reply(),
+    auth: false
+  }
+})
+
 // don't start if required from other script
 if (!module.parent) {
   server.start((err) => {
