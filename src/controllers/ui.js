@@ -6,6 +6,8 @@ const passwordHash = require('password-hash')
 const helpers = require('../lib/helpers')
 const mailSender = require('../lib/mailSender.js')
 
+const URL_ROOT = process.env.VIENTOS_IDP_URL
+
 function getLogin (request, reply) {
   return reply.view('login', { next: encodeURIComponent(request.query.next) })
 }
@@ -73,8 +75,7 @@ function postRegister (request, reply, source, error) {
       desiredEmail: request.payload.email,
       confirmationCode: uuid()
     }).then(user => {
-      let confirmationUrl = request.connection.info.protocol + '://' +
-        request.info.host + '/confirmation?code=' + user.confirmationCode
+      let confirmationUrl = URL_ROOT + '/confirmation?code=' + user.confirmationCode
 
       return mailSender.sendEmailAsText('vientos@vientos.coop',
         user.desiredEmail, 'Vientos Registration', confirmationUrl)
@@ -171,8 +172,7 @@ function postPasswordRecover (request, reply) {
     email: request.payload.email,
     code: uuid()
   }).then(reset => {
-    let resetUrl = request.connection.info.protocol + '://' +
-      request.info.host + '/password-reset?code=' + reset.code
+    let resetUrl = URL_ROOT + '/password-reset?code=' + reset.code
 
     return mailSender.sendEmailAsText('vientos@vientos.coop',
       reset.email, i18n.__('Vientos Password Reset'), resetUrl)
