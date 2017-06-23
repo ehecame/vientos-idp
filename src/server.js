@@ -6,6 +6,10 @@ const Vision = require('vision')
 const Handlebars = require('handlebars')
 const i18n = require('i18n')
 const path = require('path')
+
+if (process.env.SENTRY_DSN) {
+  require('raven').config(process.env.SENTRY_DSN).install()
+}
 const mongoose = require('mongoose')
 const User = require('./models/user')
 
