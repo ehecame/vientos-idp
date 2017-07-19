@@ -1,12 +1,7 @@
-
-var Mongoose = require('mongoose')
-
-const ClientSchema = new Mongoose.Schema({
-  clientId: String,
-  secret: String,
-  redirectUris: [String],
-  grantTypes: [String],
-  scope: String
-})
-
-module.exports = Mongoose.model('Client', ClientSchema, 'clients')
+module.exports = {
+  id: process.env.VIENTOS_CLIENT_ID,
+  secret: process.env.VIENTOS_CLIENT_SECRET,
+  grants: ['authorization_code'],
+  redirectUris: [process.env.OAUTH_CLIENT_REDIRECT_URI],
+  scope: 'profile'
+}

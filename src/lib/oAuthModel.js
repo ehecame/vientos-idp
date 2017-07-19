@@ -1,11 +1,10 @@
 const AuthorizationCode = require('../models/authorizationCode')
-const Client = require('../models/client')
+const client = require('../models/client')
 const Token = require('../models/token')
 
 function getAccessToken (accessToken) {
   return Token.findOne({ accessToken: accessToken })
     .populate('user')
-    .populate('client')
     .then(token => {
       if (!token) {
         return null
@@ -13,7 +12,7 @@ function getAccessToken (accessToken) {
       return {
         accessToken: token.accessToken,
         accessTokenExpiresAt: token.expiresAt,
-        client: { id: token.client.id },
+        client: { id: client.id },
         user: { id: token.user.id, email: token.user.email }
       }
     })
@@ -39,11 +38,10 @@ function getAuthorizationCode (authorizationCode) {
     code: authorizationCode,
     expiresAt: { $gt: new Date().toISOString() }
   })
-  .populate('client')
   .then(code => ({
     code: code.code,
     expiresAt: code.expiresAt,
-    client: code.client,
+    client: { id: client.id },
     user: { id: code.user }
   }))
   .catch(e => {
@@ -77,24 +75,12 @@ function revokeAuthorizationCode (code) {
 }
 
 function getClient (clientId, clientSecret) {
-  let params = {}
-  if (clientId) {
-    params.clientId = clientId
+  if (!clientId || client.id !== clientId || (clientSecret && client.secret !== clientSecret)) return null
+  return {
+    id: client.id,
+    grants: client.grants,
+    redirectUris: client.redirectUris
   }
-  if (clientSecret) {
-    params.secret = clientSecret
-  }
-  return Client.findOne(params)
-    .then(client => {
-      if (!client) {
-        return null
-      }
-      return {
-        id: client.id,
-        grants: client.grantTypes,
-        redirectUris: client.redirectUris
-      }
-    })
 }
 
 module.exports = {
