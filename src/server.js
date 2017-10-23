@@ -23,6 +23,7 @@ const PORT = process.env.PORT || 4000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
+const VIENTOS_PWA_URL = process.env.VIENTOS_PWA_URL || 'http://localhost:8080'
 
 mongoose.Promise = global.Promise
 mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
@@ -30,6 +31,9 @@ mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
 const server = new Hapi.Server()
 
 Handlebars.registerHelper('i18n', str => (i18n !== undefined ? i18n.__(str) : str))
+Handlebars.registerHelper('vientosPwaUrl', () => {
+  return VIENTOS_PWA_URL
+})
 
 i18n.configure({
   locales: ['en'],
