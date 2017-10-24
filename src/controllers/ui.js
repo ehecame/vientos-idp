@@ -158,6 +158,7 @@ function postPasswordReset (request, reply, source, error) {
     if (!user) {
       return reply.view('error', { message: i18n.__('Unknow error') })
     }
+    request.cookieAuth.set({id: user.id})
     return reply.view('info', { title: i18n.__('Success') })
   })
 }
