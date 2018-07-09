@@ -1,7 +1,7 @@
 module.exports = {
-  id: process.env.VIENTOS_CLIENT_ID,
-  secret: process.env.VIENTOS_CLIENT_SECRET,
+  id: process.env.IDP_CLIENT_ID,
+  secret: process.env.IDP_CLIENT_SECRET,
   grants: ['authorization_code'],
-  redirectUris: [process.env.OAUTH_CLIENT_REDIRECT_URI],
+  redirectUris: [process.env.IDP_CLIENT_REDIRECT_URL],
   scope: 'profile'
 }

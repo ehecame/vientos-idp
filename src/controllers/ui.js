@@ -6,7 +6,7 @@ const passwordHash = require('password-hash')
 const helpers = require('../lib/helpers')
 const mailSender = require('../lib/mailSender.js')
 
-const URL_ROOT = process.env.VIENTOS_IDP_URL
+const URL_ROOT = process.env.IDP_URL
 
 function getLogin (request, reply) {
   return reply.view('login', { next: encodeURIComponent(request.query.next) })
