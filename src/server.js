@@ -1,5 +1,3 @@
-const fs = require('fs')
-const http2 = require('http2')
 const Hapi = require('hapi')
 const AuthCookie = require('hapi-auth-cookie')
 const Vision = require('vision')
@@ -14,10 +12,6 @@ const mongoose = require('mongoose')
 const User = require('./models/user')
 
 const httpServerOptions = {}
-if (process.env.TLS_KEY_PATH && process.env.TLS_CERT_PATH) {
-  httpServerOptions.key = fs.readFileSync(process.env.TLS_KEY_PATH)
-  httpServerOptions.cert = fs.readFileSync(process.env.TLS_CERT_PATH)
-}
 
 const PORT = process.env.PORT || 4000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
@@ -44,9 +38,6 @@ const connectionOptions = {
   port: PORT,
   routes: { cors: { credentials: true, exposedHeaders: ['location'] } },
   state: { isSameSite: false } // required for CORS
-}
-if (httpServerOptions.key && httpServerOptions.cert) {
-  connectionOptions.listener = http2.createServer(httpServerOptions)
 }
 
 server.connection(connectionOptions)
