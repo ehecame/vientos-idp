@@ -5,7 +5,7 @@ const AuthorizationCodeSchema = new Mongoose.Schema({
   expiresAt: Date,
   grants: [ String ],
   user: { type: Mongoose.Schema.Types.ObjectId, ref: 'User' },
-  client: { type: Mongoose.Schema.Types.ObjectId, ref: 'Client' }
+  client: String
 })
 
 module.exports = Mongoose.model('AuthorizationCode', AuthorizationCodeSchema, 'authorizationCodes')

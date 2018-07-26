@@ -6,7 +6,7 @@ const passwordHash = require('password-hash')
 const helpers = require('../lib/helpers')
 const mailSender = require('../lib/mailSender.js')
 
-const URL_ROOT = process.env.VIENTOS_IDP_URL
+const URL_ROOT = process.env.IDP_URL
 
 function getLogin (request, reply) {
   return reply.view('login', { next: encodeURIComponent(request.query.next) })
@@ -158,6 +158,7 @@ function postPasswordReset (request, reply, source, error) {
     if (!user) {
       return reply.view('error', { message: i18n.__('Unknow error') })
     }
+    request.cookieAuth.set({id: user.id})
     return reply.view('info', { title: i18n.__('Success') })
   })
 }

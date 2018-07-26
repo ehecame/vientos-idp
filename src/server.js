@@ -1,24 +1,23 @@
-const fs = require('fs')
-const http2 = require('http2')
 const Hapi = require('hapi')
 const AuthCookie = require('hapi-auth-cookie')
 const Vision = require('vision')
 const Handlebars = require('handlebars')
 const i18n = require('i18n')
 const path = require('path')
+
+if (process.env.SENTRY_DSN) {
+  require('raven').config(process.env.SENTRY_DSN).install()
+}
 const mongoose = require('mongoose')
 const User = require('./models/user')
 
 const httpServerOptions = {}
-if (process.env.TLS_KEY_PATH && process.env.TLS_CERT_PATH) {
-  httpServerOptions.key = fs.readFileSync(process.env.TLS_KEY_PATH)
-  httpServerOptions.cert = fs.readFileSync(process.env.TLS_CERT_PATH)
-}
 
 const PORT = process.env.PORT || 4000
 const COOKIE_PASSWORD = process.env.COOKIE_PASSWORD || 'it-should-have-min-32-characters'
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017/vientos-idp'
+const IDP_CLIENT_REDIRECT_URL = process.env.IDP_CLIENT_REDIRECT_URL || 'http://localhost:3000/auth/vientos'
 
 mongoose.Promise = global.Promise
 mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
@@ -26,6 +25,9 @@ mongoose.connect(MONGO_URL, { promiseLibrary: global.Promise })
 const server = new Hapi.Server()
 
 Handlebars.registerHelper('i18n', str => (i18n !== undefined ? i18n.__(str) : str))
+Handlebars.registerHelper('oauthClientRedirectUri', (str) => {
+  return IDP_CLIENT_REDIRECT_URL
+})
 
 i18n.configure({
   locales: ['en'],
@@ -36,9 +38,6 @@ const connectionOptions = {
   port: PORT,
   routes: { cors: { credentials: true, exposedHeaders: ['location'] } },
   state: { isSameSite: false } // required for CORS
-}
-if (httpServerOptions.key && httpServerOptions.cert) {
-  connectionOptions.listener = http2.createServer(httpServerOptions)
 }
 
 server.connection(connectionOptions)
